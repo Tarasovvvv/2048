@@ -1,4 +1,4 @@
-import { Game, History, Mode, Theme } from './components/index';
+import { Game, History, Mode, ThemeSwitcher } from './components/index';
 
 function App() {
 
@@ -7,7 +7,7 @@ function App() {
       <Game></Game>
       <History></History>
       <Mode></Mode>
-      <Theme></Theme>
+      <ThemeSwitcher></ThemeSwitcher>
     </>
   )
 }
