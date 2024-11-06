@@ -11,7 +11,10 @@ interface IThemeProvider {
   setTheme: Dispatch<SetStateAction<Theme>>;
 }
 
-const initialValue: IThemeProvider = { theme: Theme.light, setTheme: () => {} };
+const initialValue: IThemeProvider = {
+  theme: Theme.light,
+  setTheme: () => {},
+};
 const ThemeContext = createContext<IThemeProvider>(initialValue);
 
 const ThemeProvider = ({ children }: { children: ReactNode }) => {

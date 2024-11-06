@@ -13,7 +13,7 @@ function ThemeSwitcher() {
   const { theme, setTheme } = useContext(ThemeContext);
 
   return (
-    <>
+    <section>
       <div className={s.buttonContainer}>
         <button
           className={s.button}
@@ -40,7 +40,7 @@ function ThemeSwitcher() {
           m
         </button>
       </div>
-    </>
+    </section>
   );
 }
 
