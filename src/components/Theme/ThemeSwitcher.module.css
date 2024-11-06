@@ -1,27 +1,23 @@
-.button {
-  width: 80px;
+.themeboard button {
+  width: fit-content;
   height: 50px;
   padding: 0;
   border: 0;
-  border-radius: 5px;
   cursor: pointer;
-  fill: black;
-  background-color: white;
-}
-.button:hover {
-  transition: 0.5s;
-  fill: rgb(85, 85, 85);
-  background-color: rgb(233, 233, 233);
+  background-color: inherit;
+  transition: 340ms;
 }
 
-.button-container {
+.themeboard button:hover {
+  transition: 340ms;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 5px 1px rgba(0, 0, 0, 0.5);
+}
+
+.themeboard {
   display: flex;
+  justify-content: center;
   gap: 5px;
   height: 50px;
-  width: auto;
-}
-
-.button-image {
-  height: inherit;
-  width: 30px;
+  padding: 10px;
 }
