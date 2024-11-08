@@ -1,15 +1,15 @@
 import { useState } from "react";
+import { Playground } from "@/components/index";
 import "/src/App.css";
 import s from "./Game.module.css";
-import Playground from "./Playground/Playground.tsx";
 
-const initialScore: number = 2 ** 10;
+const initialScore: number = 0;
 
 function Game() {
   const [currentScore, setCurrentScore] = useState<number>(initialScore);
   const [bestScore, setBestScore] = useState<number>(initialScore);
   return (
-    <section className="game">
+    <section className={s.game}>
       <h2 className="visually-hidden">Игровое поле</h2>
       <section className={s.scoreboard}>
         <section className={s.score}>
@@ -22,6 +22,9 @@ function Game() {
         </section>
       </section>
       <Playground size={4} theme={s.light}></Playground>
+      <div className={s.buttonContainer}>
+        <button className={s.buttonRestart}>Новая игра</button>
+      </div>
     </section>
   );
 }

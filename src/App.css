@@ -10,20 +10,14 @@ body {
   box-sizing: border-box;
 }
 
-.game {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .visually-hidden {
-  position: absolute; /* Убирает элемент из потока документа */
-  width: 1px; /* Элемент остается минимально видимым по размеру */
+  position: absolute;
+  width: 1px;
   height: 1px;
-  margin: -1px; /* Убирает излишки пространства вокруг */
+  margin: -1px;
   padding: 0;
   border: 0;
-  clip: rect(0 0 0 0); /* Обрезает элемент, делая его невидимым */
-  overflow: hidden; /* Убирает лишние области */
-  white-space: nowrap; /* Убирает переносы строк */
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+  white-space: nowrap;
 }

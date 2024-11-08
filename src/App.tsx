@@ -1,4 +1,4 @@
-import { Game, History, Mode, ThemeSwitcher } from "./components/index";
+import { Game, History, Mode, ThemeSwitcher } from "@/components/index";
 
 function App() {
   return (
