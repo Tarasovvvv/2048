@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: center;
   justify-items: center;
+  position: relative;
   width: fit-content;
   padding: 10px;
   border-radius: 10px;
@@ -11,18 +12,69 @@
   box-shadow: inset 0 0 10px 0 rgba(0, 0, 0, 0.308);
 }
 
-.tile {
+.tile,
+.tilebase {
+  text-align: center;
   align-content: center;
+  border-radius: 10px;
+}
+
+.tile,
+.tilebase,
+.secondHalf {
+  font-weight: 700;
+}
+
+.tilebase {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 3rem;
-  font-weight: 700;
   background-color: rgb(255, 255, 255);
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.226);
 }
 
-.tile,
-.playground {
+.tile {
+  position: absolute;
+  user-select: none;
+}
+
+.tileNumber {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: clamp(1rem, 2.3rem, 3rem);
+  line-height: 0.7;
+}
+
+.secondHalf {
+  font-size: clamp(0.25em, 0.6em, 0.75em);
+}
+
+@keyframes rainbow {
+  0% {
+    background-color: rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 10px 0 rgba(255, 0, 0, 0.5);
+  }
+  16% {
+    background-color: rgba(255, 0, 255, 0.6);
+    box-shadow: 0 0 10px 0 rgba(255, 0, 255, 0.5);
+  }
+  33% {
+    background-color: rgba(0, 0, 255, 0.6);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 255, 0.5);
+  }
+  49% {
+    background-color: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 10px 0 rgba(0, 255, 255, 0.5);
+  }
+  66% {
+    background-color: rgba(0, 255, 0, 0.6);
+    box-shadow: 0 0 10px 0 rgba(0, 255, 0, 0.5);
+  }
+  83% {
+    background-color: rgba(255, 255, 0, 0.6);
+    box-shadow: 0 0 10px 0 rgba(255, 255, 0, 0.5);
+  }
+  100% {
+    background-color: rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 10px 0 rgba(255, 0, 0, 0.5);
+  }
 }

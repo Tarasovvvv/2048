@@ -61,9 +61,9 @@ p,
 }
 
 .buttonRestart {
-  width: 150px;
-  height: 50px;
-  border: 1px solid transparent;
+  width: inherit;
+  height: inherit;
+  border: none;
   background-color: transparent;
   cursor: pointer;
 }
@@ -79,8 +79,6 @@ p,
   align-items: center;
   width: 150px;
   height: 50px;
-  box-sizing: content-box;
-  overflow: hidden;
 }
 
 .buttonContainer:hover {
