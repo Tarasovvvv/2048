@@ -5,7 +5,9 @@ function History() {
   const [historyData, setHistoryData] = useState();
   useEffect(() => {}, []);
 
-  return <section className={s.history}></section>;
+  return <section className={s.history}>
+    
+  </section>;
 }
 
 export default History;

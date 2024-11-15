@@ -1,71 +1,76 @@
 .game {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: fit-content;
   margin: 0 auto; /*Потом заменить на grid area в app.css*/
-}
-
-h3,
-p {
-  font-size: 1.4rem;
-  font-weight: 700;
 }
 
 h3 {
   color: rgb(61, 61, 61);
+  text-transform: uppercase;
 }
 
 h3,
 p {
+  width: 100%;
+  font-size: 1.4rem;
+  font-weight: 700;
   margin: 0;
   padding: 5px 0;
   text-align: center;
 }
 
-h3 {
-  width: fit-content;
-  text-transform: uppercase;
-}
-
 p {
-  width: 90px;
   color: rgb(14, 14, 14);
   background-color: rgb(223, 223, 223);
   box-shadow: inset 0 0 10px 0 rgba(0, 0, 0, 0.226);
 }
 
 p,
-.score,
-.scoreboard {
+.tile,
+.tilebase,
+.playground {
   border-radius: 10px;
 }
 
-.score,
 .scoreboard {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 10px;
+  display: grid;
+  grid-template-columns: 100px 100px auto 100px;
+}
+
+.game,
+.score,
+.moves,
+.buttonContainer {
   display: flex;
 }
 
-.score {
+.game,
+.score,
+.moves,
+.playground,
+.buttonContainer {
   flex-direction: column;
   align-items: center;
 }
 
+.game,
+.playground,
 .scoreboard {
   gap: 10px;
 }
 
+.game,
+.playground {
+  width: fit-content;
+}
+
 .playground {
   display: grid;
-  align-items: center;
   justify-content: center;
   justify-items: center;
   position: relative;
-  width: fit-content;
   padding: 10px;
-  border-radius: 10px;
-  gap: 10px;
   background-color: rgb(223, 223, 223);
   box-shadow: inset 0 0 10px 0 rgba(0, 0, 0, 0.308);
 }
@@ -74,7 +79,6 @@ p,
 .tilebase {
   text-align: center;
   align-content: center;
-  border-radius: 10px;
 }
 
 .tile,
@@ -130,9 +134,7 @@ p,
 }
 
 .buttonContainer {
-  display: flex;
   justify-content: center;
-  align-items: center;
   width: 150px;
   height: 50px;
 }

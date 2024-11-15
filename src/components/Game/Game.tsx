@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "@/App.css";
 import s from "./Game.module.css";
 
@@ -62,6 +62,8 @@ function Game({ size }: GameProps) {
   };
   const moveTiles = (direction: string): void => {
     setGameState((prevGameState) => {
+      let newCoordsSum: number = 0;
+      let prevCoordsSum: number = 0;
       const horizontal: boolean = direction === "left" || direction === "right";
       const coordsAscending: boolean = direction === "down" || direction === "right";
       const newGameState: GameState = structuredClone(prevGameState);
@@ -71,7 +73,9 @@ function Game({ size }: GameProps) {
         const currentLine: Tile[] = newTiles.filter((t) => t[horizontal ? "y" : "x"] === i);
         if (coordsAscending) currentLine.reverse();
         let currentTile: Tile = currentLine[0];
+        prevCoordsSum += currentTile ? currentLine[0].x + currentLine[0].y + 1 : 0;
         for (let j = 1; j < currentLine.length; j++) {
+          prevCoordsSum += currentLine[j].x + currentLine[j].y + 1;
           if (currentLine[j].degree === currentTile.degree) {
             currentTile.degree++;
             currentLine[j].status = "deleted";
@@ -96,15 +100,13 @@ function Game({ size }: GameProps) {
             deletedTilesCount++;
           } else {
             t.status = "moved";
+            newCoordsSum += t.x + t.y + 1;
           }
         });
       }
 
       // Spawn new tile if movement occurred
-      if (
-        prevGameState.tiles.filter((t) => t.status !== "deleted").reduce((sumOfCoords, tile) => sumOfCoords + tile.x + tile.y + 1, 0) !==
-        newTiles.filter((t) => t.status !== "deleted").reduce((sumOfCoords, tile) => sumOfCoords + tile.x + tile.y + 1, 0)
-      ) {
+      if (newTiles.length === size ** 2 || newCoordsSum !== prevCoordsSum) {
         spawn(newTiles);
         newGameState.moves++;
       } else {
@@ -114,11 +116,14 @@ function Game({ size }: GameProps) {
       }
 
       newGameState.tiles = newTiles;
+      localStorage.setItem("isDrawed", "false");
       return newGameState;
     });
   };
   useEffect(() => {
-    if (localStorage.getItem("tiles") === "[]") restart();
+    if (localStorage.getItem("tiles") === "[]") {
+      restart();
+    }
 
     const handleKeydown = (event: KeyboardEvent): void => {
       switch (event.key) {
@@ -150,13 +155,19 @@ function Game({ size }: GameProps) {
   }, [gameState]);
 
   const drawTiles = () => {
-    setTimeout(() => {
-      gameState.tiles.forEach((tile) => {
-        const tileElement = document.getElementById(`tile-${tile.id}`)!;
-        tileElement.style.top = `${10 + tile.y * (tileSideLength + 10)}px`;
-        tileElement.style.left = `${10 + tile.x * (tileSideLength + 10)}px`;
-      });
-    }, 1);
+    const isDrawed: boolean = localStorage.getItem("isDrawed") ? (localStorage.getItem("isDrawed") === "true" ? true : false) : false;
+    if (!isDrawed) {
+      setTimeout(() => {
+        gameState.tiles.forEach((tile) => {
+          const tileElement: HTMLElement | null = document.getElementById(`tile-${tile.id}`);
+          if (tileElement) {
+            tileElement.style.top = `${10 + tile.y * (tileSideLength + 10)}px`;
+            tileElement.style.left = `${10 + tile.x * (tileSideLength + 10)}px`;
+          }
+        });
+        localStorage.setItem("isDrawed", "true");
+      }, 2);
+    }
     return gameState.tiles.map((tile) => (
       <div
         id={`tile-${tile.id}`}
@@ -165,8 +176,8 @@ function Game({ size }: GameProps) {
         style={{
           width: `${tileSideLength}px`,
           height: `${tileSideLength}px`,
-          top: `${10 + tile.y0 * (tileSideLength + 10)}px`,
-          left: `${10 + tile.x0 * (tileSideLength + 10)}px`,
+          top: `${10 + tile[isDrawed ? "y" : "y0"] * (tileSideLength + 10)}px`,
+          left: `${10 + tile[isDrawed ? "x" : "x0"] * (tileSideLength + 10)}px`,
           backgroundColor: `${getTileColor(tile.degree)}`,
           animation: `${tile.status === "just-spawned" ? s.spawn + " 300ms linear" : "none"}, ${tile.degree > 15 ? s.rainbow + " 3s infinite linear" : "none"}`,
           zIndex: `${tile.status === "moved" ? 2 : 1}`,
@@ -190,13 +201,17 @@ function Game({ size }: GameProps) {
     <section className={s.game}>
       <h2 className="visually-hidden">Игровое поле</h2>
       <section className={s.scoreboard}>
-        <section className={s.score}>
+        <section className={s.score} style={{ gridColumn: 1 }}>
           <h3>Счет</h3>
           <p>{gameState.score}</p>
         </section>
-        <section className={s.score}>
+        <section className={s.score} style={{ gridColumn: 2 }}>
           <h3>Рекорд</h3>
           <p>{gameState.bestScore}</p>
+        </section>
+        <section className={s.moves} style={{ gridColumn: 4 }}>
+          <h3>Ходы</h3>
+          <p>{gameState.moves}</p>
         </section>
       </section>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
