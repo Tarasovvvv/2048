@@ -1,44 +1,38 @@
 import { useContext, useEffect } from "react";
-import { ThemeContext } from "./ThemeProvider";
+import { themeContext } from "@/providers/ThemeProvider";
+import LightThemeLogo from "@assets/LightThemeLogo";
+import DarkThemeLogo from "@assets/DarkThemeLogo";
+import MonochromeThemeLogo from "@assets/MonochromeThemeLogo";
 import s from "./ThemeSwitcher.module.css";
-import lightThemeLogo from "/src/assets/light-theme.svg";
-
-enum Theme {
-  light,
-  dark,
-  monochrome,
-}
 
 function ThemeSwitcher() {
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme, setTheme } = useContext(themeContext);
   useEffect(() => {
     localStorage.setItem("theme", theme.toString());
   }, [theme]);
-
   return (
     <section className={s.themeboard}>
       <h2 className="visually-hidden">Сменить тему</h2>
       <button
         onClick={() => {
-          setTheme(Theme.light);
+          setTheme("light");
         }}
       >
-        &lt; light &gt;
-      </button>
-      <button
-        className={s.button}
-        onClick={() => {
-          setTheme(Theme.dark);
-        }}
-      >
-        &lt; dark &gt;
+        <LightThemeLogo className={s.lightThemeLogo} />
       </button>
       <button
         onClick={() => {
-          setTheme(Theme.monochrome);
+          setTheme("dark");
         }}
       >
-        &lt; mono &gt;
+        <DarkThemeLogo className={s.darkThemeLogo} />
+      </button>
+      <button
+        onClick={() => {
+          setTheme("monochrome");
+        }}
+      >
+        <MonochromeThemeLogo className={s.monochromeThemeLogo} />
       </button>
     </section>
   );

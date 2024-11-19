@@ -1,12 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import Provider from "@/providers/Provider";
 import App from "./App.tsx";
-import { ThemeProvider } from "./components/Theme/ThemeProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <Provider>
+        <App />
+    </Provider>
   </StrictMode>
 );

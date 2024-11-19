@@ -1,17 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
+import { themeContext } from "@/providers/ThemeProvider";
 import "@/App.css";
 import s from "./Game.module.css";
 
-type GameProps = {
-  size: number;
-};
-
-function Game({ size }: GameProps) {
+function Game() {
+  const { theme } = useContext(themeContext);
   type GameState = {
     score: number;
     bestScore: number;
     moves: number;
     tiles: Tile[];
+    isEnded: boolean;
   };
   type Tile = {
     id: number;
@@ -22,16 +21,18 @@ function Game({ size }: GameProps) {
     degree: number;
     status: string;
   };
+  const size: number = localStorage.getItem("size") ? parseInt(localStorage.getItem("size")!) : 4;
   const tileSideLength: number = 400 / size;
   const [gameState, setGameState] = useState<GameState>({
     score: Number(localStorage.getItem("score")!) ?? 0,
     bestScore: Number(localStorage.getItem("bestScore")!) ?? 0,
     moves: Number(localStorage.getItem("moves")!) ?? 0,
     tiles: JSON.parse(localStorage.getItem("tiles")!) ?? [],
+    isEnded: Boolean(localStorage.getItem("isEnded") === "true"),
   });
   const getTileColor = (degree: number) => {
-    const color: number = 260 - 12 * degree;
-    return `rgb(${color},${color},${color})`;
+    if (theme === "monochrome") return "white";
+    return `hsl(${(degree * 360) / size ** 2}, ${theme === "dark" ? 50 : 100}%, ${theme === "dark" ? 20 : 50}%)`;
   };
   const spawn = (tilesMap: Tile[]): void => {
     const range: number = size ** 2;
@@ -58,10 +59,53 @@ function Game({ size }: GameProps) {
     const newTilesMap: Tile[] = [];
     spawn(newTilesMap);
     spawn(newTilesMap);
-    setGameState({ score: 0, bestScore: Number(localStorage.getItem("bestScore") ?? 0), moves: 0, tiles: newTilesMap });
+    setGameState({
+      score: 0,
+      bestScore: Number(localStorage.getItem("bestScore") ?? 0),
+      moves: 0,
+      tiles: newTilesMap,
+      isEnded: false,
+    });
+  };
+  const checkMovable = (tilesMap: Tile[]): boolean => {
+    let isMovable: boolean = tilesMap.length < size ** 2;
+    if (isMovable) {
+      return isMovable;
+    }
+    console.log(tilesMap.length);
+    stop: for (let i = 0; i < size; i++) {
+      let currentLine: Tile[] = tilesMap.filter((t) => t.x === i);
+      for (let j = 1; j < size; j++) {
+        if (currentLine[j].degree === currentLine[j - 1].degree) {
+          isMovable = true;
+          break stop;
+        }
+      }
+      for (let j = size - 2; j >= 0; j--) {
+        if (currentLine[j].degree === currentLine[j + 1].degree) {
+          isMovable = true;
+          break stop;
+        }
+      }
+      currentLine = tilesMap.filter((t) => t.y === i);
+      for (let j = 1; j < size; j++) {
+        if (currentLine[j].degree === currentLine[j - 1].degree) {
+          isMovable = true;
+          break stop;
+        }
+      }
+      for (let j = size - 2; j >= 0; j--) {
+        if (currentLine[j].degree === currentLine[j + 1].degree) {
+          isMovable = true;
+          break stop;
+        }
+      }
+    }
+    return isMovable;
   };
   const moveTiles = (direction: string): void => {
     setGameState((prevGameState) => {
+      if (prevGameState.isEnded) return prevGameState;
       let newCoordsSum: number = 0;
       let prevCoordsSum: number = 0;
       const horizontal: boolean = direction === "left" || direction === "right";
@@ -106,10 +150,13 @@ function Game({ size }: GameProps) {
       }
 
       // Spawn new tile if movement occurred
-      if (newTiles.length === size ** 2 || newCoordsSum !== prevCoordsSum) {
+      if (newCoordsSum !== prevCoordsSum) {
         spawn(newTiles);
         newGameState.moves++;
       } else {
+        if (!checkMovable(newTiles)) {
+          newGameState.isEnded = true;
+        }
         newTiles.sort((a, b) => {
           return a.x - b.x || a.y - b.y;
         });
@@ -120,40 +167,6 @@ function Game({ size }: GameProps) {
       return newGameState;
     });
   };
-  useEffect(() => {
-    if (localStorage.getItem("tiles") === "[]") {
-      restart();
-    }
-
-    const handleKeydown = (event: KeyboardEvent): void => {
-      switch (event.key) {
-        case "ArrowUp":
-          moveTiles("up");
-          break;
-        case "ArrowDown":
-          moveTiles("down");
-          break;
-        case "ArrowLeft":
-          moveTiles("left");
-          break;
-        case "ArrowRight":
-          moveTiles("right");
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeydown);
-    return () => {
-      window.removeEventListener("keydown", handleKeydown);
-    };
-  }, []);
-  useEffect(() => {
-    localStorage.setItem("score", gameState.score.toString());
-    localStorage.setItem("bestScore", gameState.bestScore.toString());
-    localStorage.setItem("moves", gameState.moves.toString());
-    localStorage.setItem("tiles", JSON.stringify(gameState.tiles));
-  }, [gameState]);
-
   const drawTiles = () => {
     const isDrawed: boolean = localStorage.getItem("isDrawed") ? (localStorage.getItem("isDrawed") === "true" ? true : false) : false;
     if (!isDrawed) {
@@ -186,9 +199,7 @@ function Game({ size }: GameProps) {
         <div key={`tileNumber-${tile.id}`} className={s.tileNumber}>
           {tile.degree > 13 ? (
             <span>
-              {(2 ** tile.degree).toString().slice(0, tile.degree === 17 ? 3 : 2)}
-              <br />
-              <span className={s.secondHalf}>{(2 ** tile.degree).toString().slice(tile.degree === 17 ? 3 : 2)}</span>
+              2<sup>{tile.degree}</sup>
             </span>
           ) : (
             2 ** tile.degree
@@ -197,6 +208,38 @@ function Game({ size }: GameProps) {
       </div>
     ));
   };
+  useEffect(() => {
+    if (localStorage.getItem("tiles") === "[]") {
+      restart();
+    }
+
+    const handleKeydown = (event: KeyboardEvent): void => {
+      switch (event.key) {
+        case "ArrowUp":
+          moveTiles("up");
+          break;
+        case "ArrowDown":
+          moveTiles("down");
+          break;
+        case "ArrowLeft":
+          moveTiles("left");
+          break;
+        case "ArrowRight":
+          moveTiles("right");
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeydown);
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+    };
+  }, []);
+  useEffect(() => {
+    Object.entries(gameState).forEach(([key, value]) => {
+      localStorage.setItem(key, JSON.stringify(value));
+    });
+  }, [gameState]);
   return (
     <section className={s.game}>
       <h2 className="visually-hidden">Игровое поле</h2>
@@ -214,10 +257,11 @@ function Game({ size }: GameProps) {
           <p>{gameState.moves}</p>
         </section>
       </section>
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
+      <div className={s.playgroundContainer}>
         <section
           className={s.playground}
           style={{
+            filter: gameState.isEnded ? "blur(5px)" : "none",
             gridTemplateColumns: `repeat(${size}, ${tileSideLength}px)`,
             gridTemplateRows: `repeat(${size}, ${tileSideLength}px)`,
           }}
@@ -227,16 +271,18 @@ function Game({ size }: GameProps) {
           ))}
           {drawTiles()}
         </section>
-        <div className={s.buttonContainer}>
-          <button
-            className={s.buttonRestart}
-            onClick={() => {
-              restart();
-            }}
-          >
-            Новая игра
-          </button>
-        </div>
+        {gameState.isEnded && <div className={s.gameOver}>Игра окончена</div>}
+      </div>
+      <div className={s.buttonContainer}>
+        <button
+          className={s.buttonRestart}
+          onClick={() => {
+            console.log(theme);
+            restart();
+          }}
+        >
+          Новая игра
+        </button>
       </div>
     </section>
   );
