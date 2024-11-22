@@ -8,7 +8,7 @@ import s from "./ThemeSwitcher.module.css";
 function ThemeSwitcher() {
   const { theme, setTheme } = useContext(themeContext);
   useEffect(() => {
-    localStorage.setItem("theme", theme.toString());
+    localStorage.setItem("theme", theme);
   }, [theme]);
   return (
     <section className={s.themeboard}>

@@ -1,9 +1,12 @@
 .layout {
-  width: calc(100vw - 20px);
-  height: calc(100vh - 20px);
   margin: 0;
-  padding: 10px;
   border: 0;
   background-color: var(--bg-color);
   transition: 200ms;
+  height: 100vh;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 60px auto 1fr;
+  gap: 40px;
 }

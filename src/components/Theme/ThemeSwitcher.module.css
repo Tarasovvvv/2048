@@ -1,3 +1,15 @@
+.themeboard {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  gap: 30px;
+  padding: 10px 0;
+  background-color: transparent;
+
+  grid-row: 1;
+  grid-column: 2;
+}
+
 .lightThemeLogo {
   cursor: pointer;
   fill: var(--light-theme-logo-fill);
@@ -45,12 +57,4 @@ button {
   height: 25px;
   border: none;
   background-color: transparent;
-}
-
-.themeboard {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  padding: 10px 0;
-  background-color: inherit;
 }

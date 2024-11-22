@@ -5,9 +5,9 @@ function App() {
     <Layout>
       <h1 className="visually-hidden">Игра 2048</h1>
       <ThemeSwitcher />
+      <Mode />
       <Game />
       <History />
-      <Mode />
     </Layout>
   );
 }

@@ -1,5 +1,7 @@
 .game {
-  margin: 0 auto; /*Потом заменить на grid area в app.css*/
+  justify-self: center;
+  grid-row: 2;
+  grid-column: 2;
 }
 
 h3 {
@@ -18,10 +20,10 @@ p {
 
 .scoreboard {
   box-sizing: border-box;
-  width: 100%;
-  padding: 0 10px;
   display: grid;
-  grid-template-columns: 100px 100px auto 100px;
+  grid-template-columns: repeat(4, 95px);
+  justify-content: center;
+  width: 100%;
 }
 
 .playgroundContainer {
@@ -35,9 +37,9 @@ p {
 
 .playground {
   display: grid;
-  justify-content: center;
-  justify-items: center;
   position: relative;
+  justify-items: center;
+  justify-content: center;
   padding: 10px;
   background-color: var(--lowground-bg-color);
   box-shadow: var(--lowground-shadow);
@@ -55,6 +57,7 @@ p {
   box-shadow: var(--highground-shadow);
   padding: 10px;
   border-radius: 10px;
+  animation: gameOver 300ms ease-in-out;
 }
 
 .tilebase {
@@ -68,11 +71,6 @@ p {
   text-shadow: var(--secondary-text-shadow);
   color: var(--tile-color);
   position: absolute;
-}
-
-.tileNumber {
-  font-size: clamp(1rem, 2.3rem, 3rem);
-  line-height: 0.7;
 }
 
 .secondHalf {
@@ -228,6 +226,16 @@ p,
   25% {
     opacity: 60%;
     transform: scale(60%);
+  }
+  100% {
+    opacity: 100%;
+    transform: scale(100%);
+  }
+}
+
+@keyframes gameOver {
+  0% {
+    transform: scale(0%);
   }
   100% {
     opacity: 100%;
