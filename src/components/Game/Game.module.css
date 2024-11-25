@@ -4,18 +4,8 @@
   grid-column: 2;
 }
 
-h3 {
-  text-transform: uppercase;
-  color: var(--primary-text-color);
-  text-shadow: var(--primary-text-shadow);
+.h3 {
   overflow-y: hidden;
-}
-
-p {
-  color: var(--secondary-text-color);
-  background-color: var(--lowground-bg-color);
-  text-shadow: var(--secondary-text-shadow);
-  box-shadow: var(--lowground-shadow);
 }
 
 .scoreboard {
@@ -24,6 +14,11 @@ p {
   grid-template-columns: repeat(4, 95px);
   justify-content: center;
   width: 100%;
+}
+
+.p {
+  background-color: var(--lowground-bg-color);
+  box-shadow: var(--lowground-shadow);
 }
 
 .playgroundContainer {
@@ -84,15 +79,13 @@ p {
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--primary-text-color);
-  text-shadow: var(--primary-text-shadow);
   background-color: transparent;
   cursor: pointer;
 }
 
-.buttonRestart:hover {
+.buttonRestart:active {
   transform: scale(97%);
   color: var(--secondary-text-color);
-  text-shadow: var(--secondary-text-shadow);
 }
 
 .buttonContainer {
@@ -101,7 +94,7 @@ p {
   height: 50px;
 }
 
-.buttonContainer:hover {
+.buttonContainer:active {
   background-color: var(--lowground-bg-color);
   box-shadow: var(--lowground-shadow);
 }
@@ -121,11 +114,8 @@ p {
 h3,
 p {
   width: 100%;
-  font-size: 1.4rem;
-  font-weight: 700;
   margin: 0;
   padding: 5px 0;
-  text-align: center;
 }
 .tile,
 .tilebase {
@@ -140,7 +130,7 @@ p {
 
 .tileNumber,
 .tile {
-  transition: left 100ms, top 100ms;
+  transition: 100ms;
 }
 
 .game,

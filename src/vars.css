@@ -32,6 +32,10 @@
 
   --gm-line-color: rgb(184, 184, 184);
   --gm-circle-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
+
+  --scrollbar-thumb-hover: rgb(250, 250, 250);
+
+  --history-bestscore: rgb(255, 0, 0);
 }
 
 .dark {
@@ -51,7 +55,7 @@
 
   --tilebase-color: white;
   --tilebase-bg-color: rgb(27, 27, 27);
-  --tilebase-shadow: 0 0 10px 0 black;
+  --tilebase-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 
   --tile-color: white;
 
@@ -68,6 +72,10 @@
 
   --gm-line-color: rgb(8, 8, 8);
   --gm-circle-shadow: 0 0 5px 0 white;
+
+  --scrollbar-thumb-hover: rgb(31, 31, 31);
+
+  --history-bestscore: rgba(255, 0, 0, 0.7);
 }
 
 .monochrome {
@@ -104,4 +112,8 @@
 
   --gm-line-color: rgb(184, 184, 184);
   --gm-circle-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
+
+  --scrollbar-thumb-hover: rgb(250, 250, 250);
+
+  --history-bestscore: black;
 }

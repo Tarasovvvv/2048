@@ -7,13 +7,16 @@ import "@/App.css";
 function Game() {
   const { theme } = useContext(themeContext);
   const { playgroundSize } = useContext(playgroundSizeContext);
+
   type GameState = {
     score: number;
     bestScore: number[];
     moves: number;
     tiles: Tile[];
     isEnded: boolean;
+    playgroundSize: number;
   };
+
   type Tile = {
     id: number;
     x0: number;
@@ -23,6 +26,7 @@ function Game() {
     degree: number;
     status: string;
   };
+
   const tileSideLength: number = (410 - (playgroundSize - 1) * 10) / playgroundSize;
   const [gameState, setGameState] = useState<GameState>({
     score: Number(localStorage.getItem("score")!) ?? 0,
@@ -30,11 +34,14 @@ function Game() {
     moves: Number(localStorage.getItem("moves")!) ?? 0,
     tiles: JSON.parse(localStorage.getItem("tiles")!) ?? [],
     isEnded: Boolean(localStorage.getItem("isEnded") === "true"),
+    playgroundSize: playgroundSize,
   });
+
   const getTileColor = (degree: number) => {
     if (theme === "monochrome") return "white";
     return `hsl(${(degree * 360) / playgroundSize ** 2}, ${theme === "dark" ? 50 : 100}%, ${theme === "dark" ? 20 : 50}%)`;
   };
+
   const spawn = (tilesMap: Tile[]): void => {
     const range: number = playgroundSize ** 2;
     if (tilesMap.filter((t) => t.status !== "deleted").length === range) return;
@@ -56,6 +63,7 @@ function Game() {
       return a.x - b.x || a.y - b.y;
     });
   };
+
   const restart = (): void => {
     const newTilesMap: Tile[] = [];
     spawn(newTilesMap);
@@ -66,16 +74,40 @@ function Game() {
       moves: 0,
       tiles: newTilesMap,
       isEnded: false,
+      playgroundSize: playgroundSize,
     });
   };
+
+  const updateHistory = (): void => {
+    const date: string = new Date().toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+    const history: {
+      [dates: string]: {
+        mode: string;
+        moves: string;
+        score: string;
+        isBestScore: string;
+      }[];
+    } = JSON.parse(localStorage.getItem("history")!) ?? {};
+    if (!history[date]) {
+      history[date] = [];
+    }
+    history[date].push({
+      mode: `${playgroundSize}x${playgroundSize}`,
+      moves: gameState.moves.toString(),
+      score: gameState.score.toString(),
+      isBestScore: (gameState.bestScore[playgroundSize - 1] < gameState.score).toString(),
+    });
+    localStorage.setItem("history", JSON.stringify(history));
+  };
+
   const checkMovable = (tilesMap: Tile[]): boolean => {
-    let isMovable: boolean = tilesMap.length < playgroundSize ** 2;
+    const checkedTilesMap: Tile[] = tilesMap.filter((t) => t.status !== "deleted");
+    let isMovable: boolean = checkedTilesMap.length < playgroundSize ** 2;
     if (isMovable) {
       return isMovable;
     }
-    console.log(tilesMap.length);
     stop: for (let i = 0; i < playgroundSize; i++) {
-      let currentLine: Tile[] = tilesMap.filter((t) => t.x === i);
+      let currentLine: Tile[] = checkedTilesMap.filter((t) => t.x === i);
       for (let j = 1; j < playgroundSize; j++) {
         if (currentLine[j].degree === currentLine[j - 1].degree) {
           isMovable = true;
@@ -88,7 +120,7 @@ function Game() {
           break stop;
         }
       }
-      currentLine = tilesMap.filter((t) => t.y === i);
+      currentLine = checkedTilesMap.filter((t) => t.y === i);
       for (let j = 1; j < playgroundSize; j++) {
         if (currentLine[j].degree === currentLine[j - 1].degree) {
           isMovable = true;
@@ -104,6 +136,7 @@ function Game() {
     }
     return isMovable;
   };
+
   const drawTiles = () => {
     const isDrawed: boolean = localStorage.getItem("isDrawed") ? (localStorage.getItem("isDrawed") === "true" ? true : false) : false;
     if (!isDrawed) {
@@ -116,7 +149,7 @@ function Game() {
           }
         });
         localStorage.setItem("isDrawed", "true");
-      }, 2);
+      }, 10);
     }
     return gameState.tiles.map((tile) => (
       <div
@@ -145,6 +178,7 @@ function Game() {
       </div>
     ));
   };
+
   useEffect(() => {
     if (localStorage.getItem("tiles") === "[]") {
       restart();
@@ -154,6 +188,7 @@ function Game() {
       if (["ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp"].includes(event.key)) {
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
+          event.preventDefault();
         }
         setGameState((prevGameState) => {
           if (prevGameState.isEnded) return prevGameState;
@@ -225,29 +260,32 @@ function Game() {
       window.removeEventListener("keydown", handleKeydown);
     };
   });
+
+  useEffect(() => {
+    if (gameState.playgroundSize !== playgroundSize) restart();
+  }, [playgroundSize]);
+
   useEffect(() => {
     Object.entries(gameState).forEach(([key, value]) => {
       localStorage.setItem(key, JSON.stringify(value));
     });
   }, [gameState]);
-  useEffect(() => {
-    restart();
-  }, [playgroundSize]);
+
   return (
     <section className={s.game}>
       <h2 className="visually-hidden">Игровое поле</h2>
       <section className={s.scoreboard}>
         <section className={s.score} style={{ gridColumn: 1 }}>
-          <h3>Счет</h3>
-          <p>{gameState.score}</p>
+          <h3 className={s.h3}>Счет</h3>
+          <p className={s.p}>{gameState.score}</p>
         </section>
         <section className={s.score} style={{ gridColumn: 2 }}>
-          <h3>Рекорд</h3>
-          <p>{gameState.bestScore[playgroundSize - 4]}</p>
+          <h3 className={s.h3}>Рекорд</h3>
+          <p className={s.p}>{gameState.bestScore[playgroundSize - 4]}</p>
         </section>
         <section className={s.moves} style={{ gridColumn: 4 }}>
-          <h3>Ходы</h3>
-          <p>{gameState.moves}</p>
+          <h3 className={s.h3}>Ходы</h3>
+          <p className={s.p}>{gameState.moves}</p>
         </section>
       </section>
       <div className={s.playgroundContainer}>
