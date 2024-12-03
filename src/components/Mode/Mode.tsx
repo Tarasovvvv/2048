@@ -5,6 +5,7 @@ function Mode() {
   const { playgroundSize, setPlaygroundSize } = useContext(playgroundSizeContext);
   useEffect(() => {
     localStorage.setItem("playgroundSize", playgroundSize.toString());
+    localStorage.setItem("historyIsUpdated", "false");
   }, [playgroundSize]);
   return (
     <section className={s.mode} title="Выбрать размер игрового поля">

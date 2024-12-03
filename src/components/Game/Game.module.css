@@ -46,7 +46,6 @@
   font-size: 1.7em;
   font-weight: 700;
   color: var(--primary-text-color);
-  text-shadow: var(--primary-text-shadow);
   text-transform: uppercase;
   background-color: var(--bg-color);
   box-shadow: var(--highground-shadow);

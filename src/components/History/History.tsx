@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { historyContext } from "@/providers/HistoryProvider";
 import s from "./History.module.css";
 
 function History() {
+  const { historyIsUpdated } = useContext(historyContext);
+
   type History = {
     [dates: string]: {
       mode: string;
@@ -11,48 +14,19 @@ function History() {
     }[];
   };
 
-  const [history, setHistory] = useState<History>({
-    "25 апреля 2002": [
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "true" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-    ],
-    "26 апреля 2002": [
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-    ],
-    "23 апреля 2002": [
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-    ],
-    "12 апреля 2002": [
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-    ],
-    "31 апреля 2002": [
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-    ],
-    "1 апреля 2002": [
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-      { mode: "7x7", moves: "23", score: "1024", isBestScore: "false" },
-    ],
-  });
+  const [history, setHistory] = useState<History>(JSON.parse(localStorage.getItem("history")!) ?? {});
 
   useEffect(() => {
     if (!localStorage.getItem("history")) {
-      localStorage.setItem("history", JSON.stringify(history));
+      localStorage.setItem("history", JSON.stringify(history) ?? {});
     }
-  }, []);
+  });
 
   useEffect(() => {
-    setHistory(JSON.parse(localStorage.getItem("history")!) ?? {});
-  }, [localStorage.getItem("history")]);
+    if (historyIsUpdated) {
+      setHistory(JSON.parse(localStorage.getItem("history")!) ?? {});
+    }
+  }, [historyIsUpdated]);
 
   return (
     <section className={s.history}>
@@ -63,14 +37,14 @@ function History() {
       <div className={s.historyContainer}>
         {history &&
           Object.keys(history).map((date) => (
-            <div key={`day-${date}`} className={s.dayContainer}>
-              <span className={s.date}>{date}</span>
+            <div key={`day-${date}`} className={s.dayContainer} style={{}}>
+              <span className={s.date}>{new Date(parseInt(date) * 864e5).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" }).slice(0, -3)}</span>
               {history[date].map((day, i) => (
                 <div key={`game-${i}`} className={s.lineContainer}>
                   <p className={s.dayData} style={{ width: "97px" }}>
                     {day.mode}
                   </p>
-                  <p className={s.dayData} style={{ width: "98px", color: day.isBestScore === "true" ? "var(--history-bestscore)" : "var(--secondary-text-color)" }}>
+                  <p className={s.dayData} style={{ width: "98px", textDecoration: day.isBestScore === "true" ? "underline" : "none" }}>
                     {day.score}
                   </p>
                   <p className={s.dayData} style={{ width: "98px" }}>
@@ -80,6 +54,7 @@ function History() {
               ))}
             </div>
           ))}
+        {localStorage.getItem("history") === "{}" && <div style={{ display: "flex", fontWeight: "500", fontSize: "1.2rem", alignSelf: "center" }}>Нет законченных игр</div>}
       </div>
     </section>
   );

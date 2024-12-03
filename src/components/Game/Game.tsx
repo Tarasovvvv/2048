@@ -1,11 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { themeContext } from "@/providers/ThemeProvider";
+import { historyContext } from "@/providers/HistoryProvider";
 import { playgroundSizeContext } from "@/providers/PlaygroundSizeProvider";
 import s from "./Game.module.css";
 import "@/App.css";
 
 function Game() {
   const { theme } = useContext(themeContext);
+  const { historyIsUpdated, setHistoryIsUpdated } = useContext(historyContext);
   const { playgroundSize } = useContext(playgroundSizeContext);
 
   type GameState = {
@@ -27,7 +29,8 @@ function Game() {
     status: string;
   };
 
-  const tileSideLength: number = (410 - (playgroundSize - 1) * 10) / playgroundSize;
+  const tileSideLength: number = useMemo((): number => (410 - (playgroundSize - 1) * 10) / playgroundSize, [playgroundSize]);
+
   const [gameState, setGameState] = useState<GameState>({
     score: Number(localStorage.getItem("score")!) ?? 0,
     bestScore: JSON.parse(localStorage.getItem("bestScore")!) ?? [0, 0, 0, 0],
@@ -37,10 +40,13 @@ function Game() {
     playgroundSize: playgroundSize,
   });
 
-  const getTileColor = (degree: number) => {
-    if (theme === "monochrome") return "white";
-    return `hsl(${(degree * 360) / playgroundSize ** 2}, ${theme === "dark" ? 50 : 100}%, ${theme === "dark" ? 20 : 50}%)`;
-  };
+  const getTileColor = useCallback(
+    (degree: number): string => {
+      if (theme === "monochrome") return "white";
+      return `hsl(${(degree * 360) / playgroundSize ** 2}, ${theme === "dark" ? 50 : 100}%, ${theme === "dark" ? 20 : 50}%)`;
+    },
+    [theme, playgroundSize]
+  );
 
   const spawn = (tilesMap: Tile[]): void => {
     const range: number = playgroundSize ** 2;
@@ -68,6 +74,7 @@ function Game() {
     const newTilesMap: Tile[] = [];
     spawn(newTilesMap);
     spawn(newTilesMap);
+    setHistoryIsUpdated(false);
     setGameState({
       score: 0,
       bestScore: JSON.parse(localStorage.getItem("bestScore")!) ?? [0, 0, 0, 0],
@@ -79,25 +86,32 @@ function Game() {
   };
 
   const updateHistory = (): void => {
-    const date: string = new Date().toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
-    const history: {
-      [dates: string]: {
-        mode: string;
-        moves: string;
-        score: string;
-        isBestScore: string;
-      }[];
-    } = JSON.parse(localStorage.getItem("history")!) ?? {};
-    if (!history[date]) {
-      history[date] = [];
+    if (localStorage.getItem("historyIsUpdated") === "false" || historyIsUpdated) {
+      const date: number = Math.trunc(Date.now() / 864e5);
+      const history: {
+        [dates: string]: {
+          mode: string;
+          moves: string;
+          score: string;
+          isBestScore: string;
+        }[];
+      } = JSON.parse(localStorage.getItem("history")!) ?? {};
+      if (!history[date]) {
+        history[date] = [];
+      }
+      history[date].unshift({
+        mode: `${playgroundSize}x${playgroundSize}`,
+        moves: gameState.moves.toString(),
+        score: gameState.score.toString(),
+        isBestScore: (gameState.bestScore[playgroundSize - 4] < gameState.score).toString(),
+      });
+      localStorage.setItem("history", JSON.stringify(history));
+      localStorage.setItem("historyIsUpdated", "true");
+
+      setTimeout(() => {
+        setHistoryIsUpdated(true);
+      }, 10);
     }
-    history[date].push({
-      mode: `${playgroundSize}x${playgroundSize}`,
-      moves: gameState.moves.toString(),
-      score: gameState.score.toString(),
-      isBestScore: (gameState.bestScore[playgroundSize - 1] < gameState.score).toString(),
-    });
-    localStorage.setItem("history", JSON.stringify(history));
   };
 
   const checkMovable = (tilesMap: Tile[]): boolean => {
@@ -242,6 +256,7 @@ function Game() {
           } else {
             if (!checkMovable(newTiles)) {
               newGameState.isEnded = true;
+              updateHistory();
             }
             newTiles.sort((a, b) => {
               return a.x - b.x || a.y - b.y;
@@ -250,6 +265,7 @@ function Game() {
 
           newGameState.tiles = newTiles;
           localStorage.setItem("isDrawed", "false");
+
           return newGameState;
         });
       }
