@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts"],"version":"5.6.3"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/index.ts","./src/components/game/game.tsx","./src/components/history/history.tsx","./src/components/mode/mode.tsx","./src/components/theme/themeprovider.tsx","./src/components/theme/themeswitcher.tsx"],"errors":true,"version":"5.6.3"}

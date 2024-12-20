@@ -1,0 +1,60 @@
+.themeboard {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  gap: 30px;
+  padding: 10px 0;
+  background-color: transparent;
+
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.lightThemeLogo {
+  cursor: pointer;
+  fill: var(--light-theme-logo-fill);
+  transform: var(--light-theme-logo-transform);
+}
+
+.darkThemeLogo {
+  cursor: pointer;
+  fill: var(--dark-theme-logo-fill);
+  transform: var(--dark-theme-logo-transform);
+}
+
+.monochromeThemeLogo {
+  cursor: pointer;
+  fill: var(--monochrome-theme-logo-fill);
+  transform: var(--monochrome-theme-logo-transform);
+}
+
+.lightThemeLogo:hover {
+  transform: rotate(-45deg);
+}
+
+.darkThemeLogo:hover {
+  transform: rotate(-90deg);
+}
+
+.monochromeThemeLogo:hover {
+  transform: rotate(45deg);
+}
+
+.lightThemeLogo,
+.lightThemeLogo:hover,
+.darkThemeLogo,
+.darkThemeLogo:hover,
+.monochromeThemeLogo,
+.monochromeThemeLogo:hover {
+  transition: 100ms;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  width: 25px;
+  height: 25px;
+  border: none;
+  background-color: transparent;
+}

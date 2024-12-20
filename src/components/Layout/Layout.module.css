@@ -1,0 +1,12 @@
+.layout {
+  margin: 0;
+  border: 0;
+  background-color: var(--bg-color);
+  transition: 200ms;
+  height: 100vh;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 60px auto 1fr;
+  gap: 40px;
+}
