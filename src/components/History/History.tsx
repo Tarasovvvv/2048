@@ -38,7 +38,9 @@ function History() {
         {history &&
           Object.keys(history).map((date) => (
             <div key={`day-${date}`} className={s.dayContainer} style={{}}>
-              <span className={s.date}>{new Date(parseInt(date) * 864e5).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" }).slice(0, -3)}</span>
+              <span className={s.date}>
+                {new Date(parseInt(date) * 864e5).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" }).slice(0, -3)}
+              </span>
               {history[date].map((day, i) => (
                 <div key={`game-${i}`} className={s.lineContainer}>
                   <p className={s.dayData} style={{ width: "97px" }}>
@@ -54,7 +56,9 @@ function History() {
               ))}
             </div>
           ))}
-        {localStorage.getItem("history") === "{}" && <div style={{ display: "flex", fontWeight: "500", fontSize: "1.2rem", alignSelf: "center" }}>Нет законченных игр</div>}
+        {(localStorage.getItem("history") === "{}" || !localStorage.getItem("history")) && (
+          <div style={{ display: "flex", fontWeight: "500", fontSize: "1.2rem", alignSelf: "center" }}>Нет законченных игр</div>
+        )}
       </div>
     </section>
   );
