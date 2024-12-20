@@ -193,6 +193,10 @@ function Game() {
     ));
   };
 
+  if (gameState.tiles.length === 0) {
+    restart();
+  }
+
   useEffect(() => {
     if (localStorage.getItem("tiles") === "[]") {
       restart();
